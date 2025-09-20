@@ -18,6 +18,8 @@ function displayTitles(movies) {
   container.innerHTML = "";
 
   movies.forEach((movie) => {
+    // calculate remaining tickets
+    const remaining = movie.capacity - movie.tickets_sold;
     const li = document.createElement("li");
     li.classList.add(
       "list-group-item",
@@ -31,7 +33,10 @@ function displayTitles(movies) {
     titleSpan.textContent = movie.title;
     titleSpan.classList.add("movie-title");
     titleSpan.style.cursor = "pointer";
-
+    // If sold out, add special class
+    if (remaining === 0) {
+      titleSpan.classList.add("sold-out");
+    }
     titleSpan.addEventListener("click", () => {
       displayPoster(movie);
       displayDetails(movie);
