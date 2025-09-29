@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchMovies();
 });
 
-//1 Fetch all movies
 function fetchMovies() {
   fetch(moviesUrl)
     .then(res => res.json())
@@ -28,12 +27,11 @@ function displayTitles(movies) {
       "align-items-center"
     );
 
-    // Title span (clickable)
+    
     const titleSpan = document.createElement("span");
     titleSpan.textContent = movie.title;
     titleSpan.classList.add("movie-title");
     titleSpan.style.cursor = "pointer";
-    // If sold out, add special class
     if (remaining === 0) {
       titleSpan.classList.add("sold-out");
     }
@@ -57,7 +55,7 @@ function displayTitles(movies) {
   });
 }
 
-// 3. Display movie poster
+// 3. Displaying movie poster
 function displayPoster(movie) {
   const poster = document.getElementById("movie-poster");
   poster.src = movie.poster;
@@ -65,7 +63,6 @@ function displayPoster(movie) {
 
 //4 delete function
 function deleteMovie(movieId) {
-  // 1. Delete related tickets first
   fetch(`${ticketsUrl}?film_id=${movieId}`)
     .then((res) => res.json())
     .then((tickets) => {
@@ -75,14 +72,12 @@ function deleteMovie(movieId) {
       return Promise.all(deletePromises);
     })
     .then(() => {
-      // 2. Delete the movie itself
       return fetch(`${moviesUrl}/${movieId}`, { method: "DELETE" });
     })
     .then(() => {
-      // 3. Refresh movies list
       fetchMovies();
 
-      // 4. Clear poster and details if the deleted movie was showing
+      
       const poster = document.getElementById("movie-poster");
       const details = document.getElementById("details-container");
 
@@ -132,7 +127,6 @@ function handleBuyTicket(movie) {
     .then(res => res.json())
     .then(tickets => {
       if (tickets.length > 0) {
-        // ticket exists,,PATCH
         const ticket = tickets[0];
         fetch(`${ticketsUrl}/${ticket.id}`, {
           method: "PATCH",
@@ -140,7 +134,6 @@ function handleBuyTicket(movie) {
           body: JSON.stringify({ number_of_tickets: ticket.number_of_tickets + 1 })
         });
       } else {
-        // ticket not exist,,POST
         fetch(ticketsUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -152,7 +145,7 @@ function handleBuyTicket(movie) {
       }
     });
 
-  // Update movies db (increasing tickets_sold)
+  // Updating movies db (increasing tickets_sold)
   fetch(`${moviesUrl}/${movie.id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -160,7 +153,6 @@ function handleBuyTicket(movie) {
   })
     .then(res => res.json())
     .then(updatedMovie => {
-      // Refresh details with updated data
       displayPoster(updatedMovie);
       displayDetails(updatedMovie);
     })
